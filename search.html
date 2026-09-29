@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>搜索 · 校园失物招领</title>
+<style>
+/* ==================== 设计令牌（三页统一） ==================== */
+:root {
+  --blue-600: #2E6BE6;
+  --blue-500: #3B79F0;
+  --blue-400: #5B8DEF;
+  --blue-50: #EEF4FF;
+  --blue-100: #E0ECFF;
+  --blue-bd: #D9E7FF;
+
+  --amber-600: #D98207;
+  --amber-500: #F59E0B;
+  --amber-50: #FFF6E9;
+  --amber-bd: #FBE3C4;
+
+  --green-600: #16A34A;
+  --green-50: #ECFDF3;
+  --green-bd: #CBEFDB;
+
+  --ink-900: #101828;
+  --ink-700: #344054;
+  --ink-600: #475467;
+  --ink-500: #667085;
+  --ink-400: #8A94A6;
+  --ink-300: #A9B2C1;
+  --ink-200: #CDD4DE;
+  --line: #EEF1F6;
+  --line-2: #E4E9F2;
+  --bg: #F6F8FC;
+  --white: #FFFFFF;
+
+  --r-xl: 20px;
+  --r-lg: 16px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --r-pill: 999px;
+
+  --sh-1: 0 1px 3px rgba(16,24,40,.04), 0 1px 2px rgba(16,24,40,.04);
+  --sh-2: 0 4px 12px -4px rgba(16,24,40,.08), 0 2px 4px -2px rgba(16,24,40,.04);
+  --sh-3: 0 8px 24px -8px rgba(46,107,230,.25), 0 4px 12px -4px rgba(16,24,40,.06);
+
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC",
+    "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink-900);
+  background: #E5E7EB;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px 48px;
+}
+
+/* ==================== 手机外框 ==================== */
+.phone {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px -24px rgba(0,0,0,.25),
+    0 16px 32px -16px rgba(0,0,0,.15),
+    0 2px 6px rgba(0,0,0,.08);
+  border: 1px solid rgba(0,0,0,.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 50;
+}
+
+.home-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: #000;
+  border-radius: 3px;
+  z-index: 50;
+}
+
+/* ==================== 状态栏 ==================== */
+.status-bar {
+  flex: none;
+  height: 44px;
+  padding: 0 20px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  position: relative;
+  z-index: 10;
+}
+.status-bar .right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ==================== 顶部搜索栏 ==================== */
+.top-bar {
+  flex: none;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.nav-back {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--ink-700);
+  cursor: pointer;
+  transition: .15s;
+}
+.nav-back:active { background: var(--line); }
+.nav-back svg { width: 22px; height: 22px; }
+
+/* 激活态搜索框 */
+.search-input-wrap {
+  flex: 1;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: var(--white);
+  border: 1.5px solid var(--blue-400);
+  border-radius: var(--r-pill);
+  box-shadow: 0 0 0 3px rgba(46,107,230,.08);
+  transition: .15s;
+}
+.search-input-wrap svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--blue-500);
+}
+.search-input-wrap .caret {
+  width: 1.5px;
+  height: 16px;
+  background: var(--blue-500);
+  animation: blink 1.1s steps(1) infinite;
+  flex: none;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.search-input-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--ink-900);
+}
+.search-input-wrap input::placeholder { color: var(--ink-300); }
+.search-input-wrap .clear-btn {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ink-200);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: none;
+}
+.search-input-wrap .clear-btn svg {
+  width: 10px;
+  height: 10px;
+  stroke: #fff;
+}
+
+/* 搜索按钮 */
+.btn-search {
+  flex: none;
+  height: 36px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, var(--blue-500), #2456CF);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-pill);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px -4px rgba(46,107,230,.5);
+  transition: .15s;
+}
+.btn-search:active { transform: scale(0.97); }
+
+/* ==================== 内容区 ==================== */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 16px 100px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.content::-webkit-scrollbar { display: none; }
+
+/* ==================== 筛选分段控件 ==================== */
+.segment {
+  display: flex;
+  background: #ECEFF4;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+.segment .seg {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-600);
+  padding: 8px 0;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: .15s;
+}
+.segment .seg.active {
+  background: var(--white);
+  color: var(--ink-900);
+  font-weight: 600;
+  box-shadow: var(--sh-1);
+}
+
+/* ==================== 区块标题 ==================== */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 12px;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-900);
+  letter-spacing: -0.2px;
+}
+.section-count {
+  font-size: 12px;
+  color: var(--ink-400);
+}
+
+/* ==================== 结果卡片 ==================== */
+.result-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: .15s;
+  border: 1px solid rgba(228,233,242,.6);
+}
+.result-card:active {
+  transform: scale(0.995);
+  box-shadow: var(--sh-3);
+}
+
+/* 缩略图 */
+.card-thumb {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-md);
+  background: var(--blue-50);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.card-thumb.blue   { background: var(--blue-50);  color: var(--blue-600); }
+.card-thumb.amber  { background: var(--amber-50); color: var(--amber-600); }
+.card-thumb.green  { background: var(--green-50); color: var(--green-600); }
+.card-thumb.violet { background: #F1F0FF;         color: #5B4DE6; }
+.card-thumb.rose   { background: #FFF1F2;         color: #E11D48; }
+.card-thumb svg { width: 28px; height: 28px; }
+
+.card-main { flex: 1; min-width: 0; }
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  letter-spacing: 0.3px;
+}
+.badge-lost   { background: var(--blue-50);  color: #1D4ED8; }
+.badge-found  { background: var(--amber-50); color: var(--amber-600); }
+.badge-done   { background: var(--green-50); color: var(--green-600); }
+
+.card-status {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink-400);
+  margin-left: auto;
+  flex: none;
+}
+
+.card-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink-900);
+  margin-bottom: 3px;
+  line-height: 1.4;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--ink-500);
+  margin-bottom: 5px;
+  line-height: 1.4;
+  display: -webkit-box;
+  /* 补充标准 line-clamp 属性以提升兼容性 */
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--ink-400);
+  flex-wrap: wrap;
+}
+.card-meta .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.card-meta .meta-item svg { width: 12px; height: 12px; stroke: var(--ink-400); }
+.card-meta .dot { color: var(--ink-200); }
+
+.card-arrow {
+  flex: none;
+  color: var(--ink-300);
+  display: grid;
+  place-items: center;
+  width: 18px;
+}
+.card-arrow svg { width: 14px; height: 14px; }
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+.empty-state.show { display: flex; }
+
+.empty-illu {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--blue-50);
+  color: var(--blue-400);
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+}
+.empty-illu svg {
+  width: 56px;
+  height: 56px;
+  stroke: currentColor;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-700);
+  margin-bottom: 6px;
+}
+.empty-sub {
+  font-size: 13px;
+  color: var(--ink-400);
+  margin-bottom: 24px;
+}
+.empty-btn {
+  height: 40px;
+  padding: 0 24px;
+  background: var(--white);
+  border: 1px solid var(--blue-bd);
+  color: var(--blue-600);
+  border-radius: var(--r-pill);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--sh-1);
+  transition: .15s;
+}
+.empty-btn:active {
+  background: var(--blue-50);
+}
+
+/* ==================== 切换按钮组（演示） ==================== */
+.demo-toggle {
+  flex: none;
+  padding: 10px 16px;
+  background: #fff;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.demo-toggle .dt-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: #fff;
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--ink-600);
+  cursor: pointer;
+  transition: .15s;
+}
+.demo-toggle .dt-btn.active {
+  background: var(--blue-600);
+  border-color: var(--blue-600);
+  color: #fff;
+}
+
+/* ==================== 图标 ==================== */
+svg.ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- 刘海 -->
+  <div class="notch"></div>
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="right">
+      <svg class="ic" viewBox="0 0 24 24" width="17" height="17">
+        <path d="M2 16h3M8 13h3M14 10h3M20 7h2" stroke-width="2.2"/>
+      </svg>
+      <svg class="ic" viewBox="0 0 24 24" width="16" height="16">
+        <path d="M5.6 10.8a9.4 9.4 0 0 1 12.8 0M8.5 13.9a5.4 5.4 0 0 1 7 0"/>
+        <circle cx="12" cy="17.2" r="1.3" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg viewBox="0 0 27 12" width="24" height="12" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" opacity=".5"/>
+        <rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/>
+        <rect x="2" y="2" width="18" height="8" rx="1.2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 顶部搜索栏 -->
+  <div class="top-bar">
+    <div class="nav-back">
+      <svg class="ic" viewBox="0 0 24 24">
+        <path d="M14.4 5.4 7.8 12l6.6 6.6"/>
+      </svg>
+    </div>
+    <div class="search-input-wrap">
+      <svg class="ic" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="M16.2 16.2 20.8 20.8"/>
+      </svg>
+      <div class="caret"></div>
+      <input id="searchInput" type="text" placeholder="请输入物品名称或关键词">
+      <div class="clear-btn" id="clearBtn" style="display:none">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6.6 6.6l10.8 10.8M17.4 6.6 6.6 17.4"/></svg>
+      </div>
+    </div>
+    <button class="btn-search" id="searchBtn">搜索</button>
+  </div>
+
+  <!-- 可滚动内容 -->
+  <div class="content">
+
+    <!-- 筛选分段控件 -->
+    <div class="segment">
+      <div class="seg active" onclick="filterSeg(this)">全部</div>
+      <div class="seg" onclick="filterSeg(this)">寻物</div>
+      <div class="seg" onclick="filterSeg(this)">招领</div>
+    </div>
+
+    <!-- 搜索结果视图 -->
+    <div id="resultView">
+      <div class="section-head">
+        <span class="section-title">搜索结果</span>
+        <span class="section-count">共 5 条</span>
+      </div>
+
+      <!-- 卡片 1 -->
+      <div class="result-card" data-type="lost" data-text="AirPods Pro 白色无线耳机 充电盒 图书馆">
+        <div class="card-thumb violet">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M4.5 14.2c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6v3.8H4.5z"/>
+            <rect x="3.5" y="15.5" width="2.5" height="5" rx="1"/>
+            <rect x="18" y="15.5" width="2.5" height="5" rx="1"/>
+          </svg>
+        </div>
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge badge-lost">寻物</span>
+            <span class="card-status">进行中</span>
+          </div>
+          <div class="card-title">AirPods Pro</div>
+          <div class="card-desc">白色无线耳机，黑色保护壳，充电盒内侧有星星贴纸</div>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              图书馆
+            </span>
+            <span class="dot">·</span>
+            <span>9月23日</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+
+      <!-- 卡片 2 -->
+      <div class="result-card" data-type="found" data-text="AirPods 3 白色充电盒 教学楼A区 拾到">
+        <div class="card-thumb violet">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M4.5 14.2c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6v3.8H4.5z"/>
+            <rect x="3.5" y="15.5" width="2.5" height="5" rx="1"/>
+            <rect x="18" y="15.5" width="2.5" height="5" rx="1"/>
+          </svg>
+        </div>
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge badge-found">招领</span>
+            <span class="card-status">可领取</span>
+          </div>
+          <div class="card-title">AirPods 3</div>
+          <div class="card-desc">白色充电盒，无划痕，在3号教学楼205教室拾到</div>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              教学楼A区
+            </span>
+            <span class="dot">·</span>
+            <span>9月24日</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+
+      <!-- 卡片 3 -->
+      <div class="result-card" data-type="lost" data-text="AirPods Pro 2代 USB-C 充电盒 体育馆 刻字">
+        <div class="card-thumb violet">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M4.5 14.2c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6v3.8H4.5z"/>
+            <rect x="3.5" y="15.5" width="2.5" height="5" rx="1"/>
+            <rect x="18" y="15.5" width="2.5" height="5" rx="1"/>
+          </svg>
+        </div>
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge badge-lost">寻物</span>
+            <span class="badge badge-done">已归还</span>
+            <span class="card-status">已解决</span>
+          </div>
+          <div class="card-title">AirPods Pro (2代)</div>
+          <div class="card-desc">USB-C 充电盒，有定制刻字，上周五在体育馆丢失</div>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              体育馆
+            </span>
+            <span class="dot">·</span>
+            <span>9月20日</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+
+      <!-- 卡片 4（示例2：雨伞） -->
+      <div class="result-card" data-type="found" data-text="黑色雨伞 教学楼A区 蓝色挂绳 拾到">
+        <div class="card-thumb amber">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 3.6c4.7 0 8.4 3.6 8.4 8H3.6c0-4.4 3.7-8 8.4-8z"/>
+            <path d="M12 11.6v6.2a2.4 2.4 0 0 0 4.8 0"/>
+          </svg>
+        </div>
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge badge-found">招领</span>
+            <span class="card-status">可领取</span>
+          </div>
+          <div class="card-title">黑色雨伞</div>
+          <div class="card-desc">在教学楼A区一楼拾到，伞柄挂有蓝色挂绳</div>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              教学楼A区
+            </span>
+            <span class="dot">·</span>
+            <span>9月24日</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+
+      <!-- 卡片 5 -->
+      <div class="result-card" data-type="lost" data-text="黑色校园卡 图书馆三楼 遗失 卡套">
+        <div class="card-thumb blue">
+          <svg class="ic" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+            <path d="M3 10h18"/>
+            <circle cx="8" cy="15" r="1.3"/>
+          </svg>
+        </div>
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge badge-lost">寻物</span>
+            <span class="card-status">进行中</span>
+          </div>
+          <div class="card-title">黑色校园卡</div>
+          <div class="card-desc">卡套为深蓝硅胶，9月24日下午在图书馆三楼遗失</div>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              图书馆三楼
+            </span>
+            <span class="dot">·</span>
+            <span>9月24日</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空状态视图（默认隐藏，演示用 toggle 切换） -->
+    <div id="emptyView" class="empty-state">
+      <div class="empty-illu">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="20" cy="20" r="12"/>
+          <path d="M29 29 40 40"/>
+          <path d="M15 20h10"/>
+        </svg>
+      </div>
+      <div class="empty-title">没有找到相关信息</div>
+      <div class="empty-sub">换个关键词试试</div>
+      <button class="empty-btn">返回首页</button>
+    </div>
+
+  </div>
+
+  <!-- 演示切换按钮 -->
+  <div class="demo-toggle">
+    <button class="dt-btn active" onclick="toggleView(this, 'result')">有结果</button>
+    <button class="dt-btn" onclick="toggleView(this, 'empty')">空状态</button>
+  </div>
+</div>
+
+<script>
+  const input = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearBtn');
+  const searchBtn = document.getElementById('searchBtn');
+  const resultView = document.getElementById('resultView');
+  const emptyView = document.getElementById('emptyView');
+  const countSpan = document.querySelector('.section-count');
+  let currentTab = '全部';
+
+  // 获取当前激活的 tab
+  function getActiveTab() {
+    const active = document.querySelector('.segment .seg.active');
+    return active ? active.textContent.trim() : '全部';
+  }
+
+  // 核心过滤函数
+  function doSearch() {
+    const kw = input.value.trim().toLowerCase();
+    const tab = getActiveTab();
+    let visible = 0;
+
+    document.querySelectorAll('.result-card').forEach(card => {
+      const type = card.dataset.type;
+      const text = card.dataset.text.toLowerCase();
+
+      // tab 过滤
+      let tabOk = true;
+      if (tab === '寻物') tabOk = (type === 'lost');
+      else if (tab === '招领') tabOk = (type === 'found');
+
+      // 关键词过滤
+      let kwOk = true;
+      if (kw) kwOk = text.includes(kw);
+
+      if (tabOk && kwOk) {
+        card.style.display = '';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // 更新数量 / 空状态
+    countSpan.textContent = `共 ${visible} 条`;
+    if (visible === 0) {
+      resultView.style.display = 'none';
+      emptyView.classList.add('show');
+    } else {
+      resultView.style.display = 'block';
+      emptyView.classList.remove('show');
+    }
+  }
+
+  // 筛选分段切换
+  function filterSeg(el) {
+    document.querySelectorAll('.segment .seg').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    doSearch();
+  }
+
+  // 搜索输入（实时）
+  input.addEventListener('input', () => {
+    clearBtn.style.display = input.value ? 'grid' : 'none';
+    doSearch();
+  });
+
+  // 搜索按钮
+  searchBtn.addEventListener('click', doSearch);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  // 清空按钮
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    clearBtn.style.display = 'none';
+    input.focus();
+    doSearch();
+  });
+
+  // 演示切换（兼容）
+  function toggleView(btn, type) {
+    document.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (type === 'result') {
+      input.value = '';
+      clearBtn.style.display = 'none';
+      doSearch();
+    } else {
+      resultView.style.display = 'none';
+      emptyView.classList.add('show');
+    }
+  }
+</script>
+
+</body>
+</html>

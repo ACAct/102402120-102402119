@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>信息详情 · 校园失物招领</title>
+<style>
+/* ==================== 设计令牌（四页统一） ==================== */
+:root {
+  --blue-600: #2E6BE6;
+  --blue-500: #3B79F0;
+  --blue-400: #5B8DEF;
+  --blue-50: #EEF4FF;
+  --blue-100: #E0ECFF;
+  --blue-bd: #D9E7FF;
+
+  --amber-600: #D98207;
+  --amber-500: #F59E0B;
+  --amber-50: #FFF6E9;
+  --amber-bd: #FBE3C4;
+
+  --green-600: #16A34A;
+  --green-50: #ECFDF3;
+  --green-bd: #CBEFDB;
+
+  --ink-900: #101828;
+  --ink-700: #344054;
+  --ink-600: #475467;
+  --ink-500: #667085;
+  --ink-400: #8A94A6;
+  --ink-300: #A9B2C1;
+  --ink-200: #CDD4DE;
+  --line: #EEF1F6;
+  --line-2: #E4E9F2;
+  --bg: #F6F8FC;
+  --white: #FFFFFF;
+
+  --r-xl: 20px;
+  --r-lg: 16px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --r-pill: 999px;
+
+  --sh-1: 0 1px 3px rgba(16,24,40,.04), 0 1px 2px rgba(16,24,40,.04);
+  --sh-2: 0 4px 12px -4px rgba(16,24,40,.08), 0 2px 4px -2px rgba(16,24,40,.04);
+  --sh-3: 0 8px 24px -8px rgba(46,107,230,.25), 0 4px 12px -4px rgba(16,24,40,.06);
+
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC",
+    "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink-900);
+  background: #E5E7EB;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px 48px;
+}
+
+/* ==================== 手机外框 ==================== */
+.phone {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px -24px rgba(0,0,0,.25),
+    0 16px 32px -16px rgba(0,0,0,.15),
+    0 2px 6px rgba(0,0,0,.08);
+  border: 1px solid rgba(0,0,0,.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 50;
+}
+
+.home-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: #000;
+  border-radius: 3px;
+  z-index: 50;
+}
+
+/* ==================== 状态栏 ==================== */
+.status-bar {
+  flex: none;
+  height: 44px;
+  padding: 0 20px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  position: relative;
+  z-index: 10;
+}
+.status-bar .right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ==================== 顶部导航栏 ==================== */
+.navbar {
+  flex: none;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  position: relative;
+  background: transparent;
+  z-index: 5;
+}
+
+/* 导航按钮悬浮在 Hero 图上方 */
+.navbar.floating {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  z-index: 15;
+}
+
+.nav-back {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--ink-700);
+  cursor: pointer;
+  transition: .15s;
+  background: rgba(255,255,255,.92);
+  box-shadow: var(--sh-1);
+}
+.nav-back:active { background: #fff; }
+.nav-back svg { width: 22px; height: 22px; }
+
+.nav-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.2px;
+}
+
+/* ==================== 可滚动内容 ==================== */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 140px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.content::-webkit-scrollbar { display: none; }
+
+/* ==================== Hero 图片区 ==================== */
+.hero {
+  position: relative;
+  height: 280px;
+  margin: 0 16px 0;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: linear-gradient(135deg, #EEF4FF 0%, #D9E7FF 60%, #F1F0FF 100%);
+  display: grid;
+  place-items: center;
+}
+
+.hero-ic {
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  color: #5B8DEF;
+}
+.hero-ic svg { width: 96px; height: 96px; stroke-width: 1.2; }
+
+/* 翻页指示器 */
+.hero-pager {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+.hero-pager .dot {
+  width: 18px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,.7);
+  transition: .2s;
+}
+.hero-pager .dot.active {
+  width: 26px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+
+/* 操作按钮（右下/左下） */
+.hero-actions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+}
+.hero-actions .circ-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--ink-700);
+  box-shadow: var(--sh-1);
+}
+.hero-actions .circ-btn svg { width: 16px; height: 16px; }
+
+/* ==================== 标题区 ==================== */
+.title-section {
+  padding: 18px 16px 0;
+}
+
+.title-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+.badge-lost   { background: var(--blue-50);  color: #1D4ED8; }
+.badge-found  { background: var(--amber-50); color: var(--amber-600); }
+.badge-done   { background: var(--green-50); color: var(--green-600); }
+.badge-active { background: var(--blue-50); color: var(--blue-600); }
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.badge-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.title-main {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--ink-900);
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.title-sub {
+  font-size: 12.5px;
+  color: var(--ink-400);
+}
+
+/* ==================== 详细信息卡片 ==================== */
+.info-card {
+  margin: 16px 16px 0;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.info-row:last-child { border-bottom: none; }
+
+.info-row .label {
+  flex: none;
+  width: 74px;
+  font-size: 12.5px;
+  color: var(--ink-400);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.info-row .label svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--ink-400);
+}
+
+.info-row .value {
+  flex: 1;
+  font-size: 13.5px;
+  color: var(--ink-900);
+  line-height: 1.5;
+  text-align: right;
+}
+.info-row .value.left-align {
+  text-align: left;
+}
+
+/* 发布者行 */
+.publisher-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.publisher-row:last-child { border-bottom: none; }
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--blue-50);
+  color: var(--blue-700, #1D4ED8);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  flex: none;
+}
+.avatar.green { background: var(--green-50); color: var(--green-700, #15803D); }
+.avatar.amber { background: var(--amber-50); color: var(--amber-700, #B54708); }
+
+.publisher-info { flex: 1; min-width: 0; }
+.publisher-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  margin-bottom: 2px;
+}
+.publisher-meta {
+  font-size: 11.5px;
+  color: var(--ink-400);
+}
+
+/* ==================== 底部固定操作区 ==================== */
+.bottom-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 16px 32px;
+  background: linear-gradient(180deg, rgba(246,248,252,0) 0%, rgba(246,248,252,0.95) 30%, #F6F8FC 100%);
+  z-index: 10;
+}
+
+.btn-primary {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--blue-500), #2456CF);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 10px 22px -10px rgba(46,107,230,.7);
+  transition: .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-primary:active {
+  transform: scale(0.99);
+  box-shadow: 0 6px 14px -6px rgba(46,107,230,.6);
+}
+.btn-primary svg { width: 18px; height: 18px; stroke: #fff; }
+
+/* 已解决态：弱化按钮 */
+.btn-done {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: var(--r-md);
+  background: #F3F6FB;
+  color: var(--ink-400);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-done svg { width: 18px; height: 18px; stroke: var(--ink-300); }
+
+/* 已解决绿色徽章（与按钮上方独立显示） */
+.resolved-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: var(--green-50);
+  border: 1px solid var(--green-bd);
+  border-radius: var(--r-md);
+  color: var(--green-600);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.resolved-strip svg { width: 18px; height: 18px; }
+
+/* ==================== 演示切换按钮 ==================== */
+.demo-toggle {
+  flex: none;
+  padding: 10px 16px;
+  background: #fff;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.demo-toggle .dt-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: #fff;
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--ink-600);
+  cursor: pointer;
+  transition: .15s;
+}
+.demo-toggle .dt-btn.active {
+  background: var(--blue-600);
+  border-color: var(--blue-600);
+  color: #fff;
+}
+
+/* ==================== 图标 ==================== */
+svg.ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+
+/* 隐藏 */
+.hidden { display: none !important; }
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- 刘海 -->
+  <div class="notch"></div>
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="right">
+      <svg class="ic" viewBox="0 0 24 24" width="17" height="17">
+        <path d="M2 16h3M8 13h3M14 10h3M20 7h2" stroke-width="2.2"/>
+      </svg>
+      <svg class="ic" viewBox="0 0 24 24" width="16" height="16">
+        <path d="M5.6 10.8a9.4 9.4 0 0 1 12.8 0M8.5 13.9a5.4 5.4 0 0 1 7 0"/>
+        <circle cx="12" cy="17.2" r="1.3" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg viewBox="0 0 27 12" width="24" height="12" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" opacity=".5"/>
+        <rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/>
+        <rect x="2" y="2" width="18" height="8" rx="1.2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 悬浮顶部导航栏 -->
+  <div class="navbar floating">
+    <div class="nav-back">
+      <svg class="ic" viewBox="0 0 24 24">
+        <path d="M14.4 5.4 7.8 12l6.6 6.6"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 可滚动内容 -->
+  <div class="content">
+
+    <!-- Hero 图片区 -->
+    <div class="hero">
+      <div class="hero-ic">
+        <svg class="ic" viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+          <path d="M3 10h18"/>
+          <circle cx="8" cy="15" r="1.5"/>
+          <path d="M12.5 14.5h5.5"/>
+        </svg>
+      </div>
+      <div class="hero-pager">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="hero-actions">
+        <div class="circ-btn" title="收藏">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 4.4l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 16.8l-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 标题区 -->
+    <div class="title-section">
+      <div class="title-tags">
+        <span class="badge badge-lost" id="typeBadge">寻物</span>
+        <span class="badge-status badge-active" id="statusBadge">
+          <span class="dot"></span>寻找中
+        </span>
+      </div>
+      <div class="title-main" id="itemTitle">黑色校园卡</div>
+      <div class="title-sub" id="itemSub">卡套上有一个小型蓝色挂饰</div>
+    </div>
+
+    <!-- 详细信息卡片 -->
+    <div class="info-card">
+
+      <!-- 丢失/拾取时间 -->
+      <div class="info-row">
+        <div class="label">
+          <svg class="ic" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 7.6V12l3.1 1.9"/>
+          </svg>
+          <span id="timeLabel">丢失时间</span>
+        </div>
+        <div class="value">2026年9月24日 15:30</div>
+      </div>
+
+      <!-- 丢失/拾取地点 -->
+      <div class="info-row">
+        <div class="label">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/>
+            <circle cx="12" cy="11" r="2.5"/>
+          </svg>
+          <span id="locLabel">丢失地点</span>
+        </div>
+        <div class="value">图书馆三楼</div>
+      </div>
+
+      <!-- 物品描述 -->
+      <div class="info-row">
+        <div class="label">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h10M4 18h16"/>
+          </svg>
+          物品描述
+        </div>
+        <div class="value left-align">
+          黑色校园卡，卡套上有一个小型蓝色挂饰，卡面照片模糊，失主为计算机学院大三学生。
+        </div>
+      </div>
+
+      <!-- 发布者 -->
+      <div class="publisher-row">
+        <div class="avatar">林</div>
+        <div class="publisher-info">
+          <div class="publisher-name">林同学</div>
+          <div class="publisher-meta">计算机学院 · 大三</div>
+        </div>
+        <svg class="ic" viewBox="0 0 24 24" width="18" height="18" style="color:var(--ink-300)">
+          <path d="M9 6l6 6-6 6"/>
+        </svg>
+      </div>
+
+      <!-- 发布时间 -->
+      <div class="info-row">
+        <div class="label">
+          <svg class="ic" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 8v4l3 2"/>
+          </svg>
+          发布时间
+        </div>
+        <div class="value">2小时前</div>
+      </div>
+
+    </div>
+
+    <!-- 底部占位（为固定操作栏留出空间） -->
+    <div style="height:40px"></div>
+
+  </div>
+
+  <!-- 底部固定操作区 -->
+  <div class="bottom-bar" id="bottomBar">
+    <!-- 激活态 -->
+    <div id="activeState">
+      <button class="btn-primary">
+        <svg class="ic" viewBox="0 0 24 24">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+        联系发布者
+      </button>
+    </div>
+
+    <!-- 已解决态 -->
+    <div id="resolvedState" class="hidden">
+      <div class="resolved-strip">
+        <svg class="ic" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        已找到物品，感谢配合！
+      </div>
+      <button class="btn-done">
+        <svg class="ic" viewBox="0 0 24 24">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        已完成，无需联系
+      </button>
+    </div>
+  </div>
+
+  <!-- 演示切换按钮 -->
+  <div class="demo-toggle">
+    <button class="dt-btn active" onclick="toggleState(this, 'active')">寻找中</button>
+    <button class="dt-btn" onclick="toggleState(this, 'resolved')">已解决</button>
+  </div>
+</div>
+
+<script>
+  // 演示：切换激活态/已解决态
+  function toggleState(btn, type) {
+    document.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const activeEl = document.getElementById('activeState');
+    const resolvedEl = document.getElementById('resolvedState');
+    const badge = document.getElementById('statusBadge');
+    const timeLabel = document.getElementById('timeLabel');
+    const locLabel = document.getElementById('locLabel');
+    const itemTitle = document.getElementById('itemTitle');
+    const itemSub = document.getElementById('itemSub');
+    const typeBadge = document.getElementById('typeBadge');
+    const avatar = document.querySelector('.avatar');
+    const publisherName = document.querySelector('.publisher-name');
+
+    if (type === 'active') {
+      // 寻物 - 寻找中
+      activeEl.classList.remove('hidden');
+      resolvedEl.classList.add('hidden');
+      typeBadge.textContent = '寻物';
+      typeBadge.className = 'badge badge-lost';
+      badge.innerHTML = '<span class="dot"></span>寻找中';
+      badge.className = 'badge-status badge-active';
+      timeLabel.textContent = '丢失时间';
+      locLabel.textContent = '丢失地点';
+      itemTitle.textContent = '黑色校园卡';
+      itemSub.textContent = '卡套上有一个小型蓝色挂饰';
+      avatar.textContent = '林';
+      avatar.className = 'avatar';
+      publisherName.textContent = '林同学';
+      // Hero 图标改回校园卡
+      document.querySelector('.hero-ic svg').outerHTML =
+        '<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/><path d="M12.5 14.5h5.5"/></svg>';
+    } else {
+      // 招领 - 已归还
+      activeEl.classList.add('hidden');
+      resolvedEl.classList.remove('hidden');
+      typeBadge.textContent = '招领';
+      typeBadge.className = 'badge badge-found';
+      badge.innerHTML = '<span class="dot" style="background:#16A34A"></span>已归还';
+      badge.className = 'badge-status badge-done';
+      timeLabel.textContent = '拾取时间';
+      locLabel.textContent = '拾取地点';
+      itemTitle.textContent = '黑色雨伞';
+      itemSub.textContent = '伞柄挂有蓝色编织挂绳，已归还失主';
+      avatar.textContent = '王';
+      avatar.className = 'avatar amber';
+      publisherName.textContent = '王同学';
+      // Hero 图标改成雨伞
+      document.querySelector('.hero-ic svg').outerHTML =
+        '<svg class="ic" viewBox="0 0 24 24"><path d="M12 3.6c4.7 0 8.4 3.6 8.4 8H3.6c0-4.4 3.7-8 8.4-8z"/><path d="M12 11.6v6.2a2.4 2.4 0 0 0 4.8 0"/></svg>';
+    }
+  }
+</script>
+
+</body>
+</html>

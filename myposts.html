@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>我的发布 · 校园失物招领</title>
+<style>
+/* ==================== 设计令牌（六页统一） ==================== */
+:root {
+  --blue-600: #2E6BE6;
+  --blue-500: #3B79F0;
+  --blue-400: #5B8DEF;
+  --blue-50: #EEF4FF;
+  --blue-100: #E0ECFF;
+  --blue-bd: #D9E7FF;
+
+  --amber-600: #D98207;
+  --amber-500: #F59E0B;
+  --amber-50: #FFF6E9;
+  --amber-bd: #FBE3C4;
+
+  --green-600: #16A34A;
+  --green-50: #ECFDF3;
+  --green-bd: #CBEFDB;
+
+  --ink-900: #101828;
+  --ink-700: #344054;
+  --ink-600: #475467;
+  --ink-500: #667085;
+  --ink-400: #8A94A6;
+  --ink-300: #A9B2C1;
+  --ink-200: #CDD4DE;
+  --line: #EEF1F6;
+  --line-2: #E4E9F2;
+  --bg: #F6F8FC;
+  --white: #FFFFFF;
+
+  --r-xl: 20px;
+  --r-lg: 16px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --r-pill: 999px;
+
+  --sh-1: 0 1px 3px rgba(16,24,40,.04), 0 1px 2px rgba(16,24,40,.04);
+  --sh-2: 0 4px 12px -4px rgba(16,24,40,.08), 0 2px 4px -2px rgba(16,24,40,.04);
+
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC",
+    "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink-900);
+  background: #E5E7EB;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px 48px;
+}
+
+/* ==================== 手机外框 ==================== */
+.phone {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px -24px rgba(0,0,0,.25),
+    0 16px 32px -16px rgba(0,0,0,.15),
+    0 2px 6px rgba(0,0,0,.08);
+  border: 1px solid rgba(0,0,0,.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 50;
+}
+
+.home-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: #000;
+  border-radius: 3px;
+  z-index: 50;
+}
+
+/* ==================== 状态栏 ==================== */
+.status-bar {
+  flex: none;
+  height: 44px;
+  padding: 0 20px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.status-bar .right { display: flex; align-items: center; gap: 5px; }
+
+/* ==================== 顶部导航栏 ==================== */
+.navbar {
+  flex: none;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  position: relative;
+}
+.nav-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.2px;
+}
+
+/* ==================== 内容区 ==================== */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 16px 100px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.content::-webkit-scrollbar { display: none; }
+
+/* ==================== 用户信息区 ==================== */
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+  border: 1px solid var(--line);
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--blue-500), #2456CF);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  flex: none;
+  box-shadow: 0 6px 16px -6px rgba(46,107,230,.45);
+}
+
+.profile-info { flex: 1; min-width: 0; }
+.profile-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-900);
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+}
+.profile-desc {
+  font-size: 12px;
+  color: var(--ink-400);
+}
+
+/* 统计胶囊 */
+.profile-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex: none;
+}
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--blue-50);
+  color: var(--blue-600);
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 600;
+}
+.stat-pill svg { width: 12px; height: 12px; }
+
+.stat-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--blue-600);
+  letter-spacing: -0.5px;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--ink-400);
+}
+
+/* ==================== Tab 分段控件 ==================== */
+.segment {
+  display: flex;
+  background: #ECEFF4;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+.segment .seg {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-600);
+  padding: 8px 0;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: .15s;
+}
+.segment .seg.active {
+  background: var(--white);
+  color: var(--ink-900);
+  font-weight: 600;
+  box-shadow: var(--sh-1);
+}
+
+/* ==================== 信息卡片 ==================== */
+.post-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+  border: 1px solid rgba(228,233,242,.6);
+  transition: .15s;
+}
+.post-card:active {
+  transform: scale(0.995);
+  box-shadow: 0 6px 20px -6px rgba(16,24,40,.12);
+}
+
+/* 缩略图 */
+.pc-thumb {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-md);
+  display: grid;
+  place-items: center;
+}
+.pc-thumb.blue   { background: var(--blue-50);  color: var(--blue-600); }
+.pc-thumb.amber  { background: var(--amber-50); color: var(--amber-600); }
+.pc-thumb.green  { background: var(--green-50); color: var(--green-600); }
+.pc-thumb.violet { background: #F1F0FF;         color: #5B4DE6; }
+.pc-thumb svg { width: 28px; height: 28px; }
+
+.pc-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pc-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* 类型徽章 */
+.badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  letter-spacing: 0.3px;
+}
+.badge-lost   { background: var(--blue-50);  color: #1D4ED8; }
+.badge-found  { background: var(--amber-50); color: var(--amber-600); }
+
+/* 状态徽章（4 种） */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  flex: none;
+}
+.status-pill .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status-ongoing   { background: var(--blue-50);    color: var(--blue-600); }
+.status-waiting   { background: var(--amber-50);   color: var(--amber-600); }
+.status-resolved  { background: var(--green-50);   color: var(--green-600); }
+
+.pc-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  margin-bottom: 5px;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pc-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--ink-400);
+}
+.pc-meta .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pc-meta .meta-item svg { width: 12px; height: 12px; stroke: var(--ink-400); }
+.pc-meta .dot { color: var(--ink-200); }
+
+/* 右侧按钮组 */
+.pc-actions {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: center;
+}
+.pc-act-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .15s;
+  white-space: nowrap;
+}
+.pc-act-btn svg { width: 11px; height: 11px; }
+
+.pc-act-btn.edit {
+  background: var(--blue-50);
+  color: var(--blue-600);
+  border: 1px solid var(--blue-bd);
+}
+.pc-act-btn.edit:active { background: var(--blue-100); }
+
+.pc-act-btn.state {
+  background: var(--green-50);
+  color: var(--green-600);
+  border: 1px solid var(--green-bd);
+}
+.pc-act-btn.state:active { background: #D1FAE5; }
+
+/* 空状态 */
+.empty-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+}
+.empty-mini svg { width: 48px; height: 48px; color: var(--ink-300); margin-bottom: 12px; }
+.empty-mini span { font-size: 13px; color: var(--ink-400); }
+
+/* ==================== 图标 ==================== */
+svg.ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- 刘海 -->
+  <div class="notch"></div>
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="right">
+      <svg class="ic" viewBox="0 0 24 24" width="17" height="17">
+        <path d="M2 16h3M8 13h3M14 10h3M20 7h2" stroke-width="2.2"/>
+      </svg>
+      <svg class="ic" viewBox="0 0 24 24" width="16" height="16">
+        <path d="M5.6 10.8a9.4 9.4 0 0 1 12.8 0M8.5 13.9a5.4 5.4 0 0 1 7 0"/>
+        <circle cx="12" cy="17.2" r="1.3" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg viewBox="0 0 27 12" width="24" height="12" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" opacity=".5"/>
+        <rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/>
+        <rect x="2" y="2" width="18" height="8" rx="1.2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 顶部导航 -->
+  <div class="navbar">
+    <span class="nav-title">我的发布</span>
+  </div>
+
+  <!-- 可滚动内容 -->
+  <div class="content">
+
+    <!-- 用户信息卡片 -->
+    <div class="profile-card">
+      <div class="profile-avatar">林</div>
+      <div class="profile-info">
+        <div class="profile-name">林同学</div>
+        <div class="profile-desc">计算机学院 · 大三 · 已帮助 5 位同学</div>
+      </div>
+      <div class="profile-stats">
+        <span class="stat-pill">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 4.4l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 16.8l-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"/>
+          </svg>
+          热心指数 82
+        </span>
+        <div style="text-align:right">
+          <div class="stat-count">3</div>
+          <div class="stat-label">共发布信息</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 筛选 Tab -->
+    <div class="segment">
+      <div class="seg active" onclick="filterTab(this)">全部</div>
+      <div class="seg" onclick="filterTab(this)">寻物</div>
+      <div class="seg" onclick="filterTab(this)">招领</div>
+    </div>
+
+    <!-- ============ 寻物：寻找中 ============ -->
+    <div class="post-card" data-type="lost">
+      <div class="pc-thumb blue">
+        <svg class="ic" viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+          <path d="M3 10h18"/>
+          <circle cx="8" cy="15" r="1.5"/>
+        </svg>
+      </div>
+      <div class="pc-main">
+        <div>
+          <div class="pc-top">
+            <span class="badge badge-lost">寻物</span>
+            <span class="status-pill status-ongoing"><span class="dot"></span>寻找中</span>
+          </div>
+          <div class="pc-title">黑色校园卡</div>
+        </div>
+        <div class="pc-meta">
+          <span class="meta-item">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+            图书馆三楼
+          </span>
+          <span class="dot">·</span>
+          <span>2小时前</span>
+        </div>
+      </div>
+      <div class="pc-actions">
+        <button class="pc-act-btn edit">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M4.6 19.4h4l10-10a2.05 2.05 0 0 0-2.9-2.9l-10 10z"/></svg>
+          编辑
+        </button>
+        <button class="pc-act-btn state">
+          <svg class="ic" viewBox="0 0 24 24"><path d="m9 12 2.5 2.5L16 10"/></svg>
+          修改状态
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ 招领：招领中 ============ -->
+    <div class="post-card" data-type="found">
+      <div class="pc-thumb amber">
+        <svg class="ic" viewBox="0 0 24 24">
+          <path d="M12 3.6c4.7 0 8.4 3.6 8.4 8H3.6c0-4.4 3.7-8 8.4-8z"/>
+          <path d="M12 11.6v6.2a2.4 2.4 0 0 0 4.8 0"/>
+        </svg>
+      </div>
+      <div class="pc-main">
+        <div>
+          <div class="pc-top">
+            <span class="badge badge-found">招领</span>
+            <span class="status-pill status-waiting"><span class="dot"></span>招领中</span>
+          </div>
+          <div class="pc-title">黑色雨伞（灰色长柄）</div>
+        </div>
+        <div class="pc-meta">
+          <span class="meta-item">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+            三食堂二楼
+          </span>
+          <span class="dot">·</span>
+          <span>昨天 12:35</span>
+        </div>
+      </div>
+      <div class="pc-actions">
+        <button class="pc-act-btn edit">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M4.6 19.4h4l10-10a2.05 2.05 0 0 0-2.9-2.9l-10 10z"/></svg>
+          编辑
+        </button>
+        <button class="pc-act-btn state">
+          <svg class="ic" viewBox="0 0 24 24"><path d="m9 12 2.5 2.5L16 10"/></svg>
+          修改状态
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ 招领：已归还 ============ -->
+    <div class="post-card" data-type="found">
+      <div class="pc-thumb green">
+        <svg class="ic" viewBox="0 0 24 24">
+          <circle cx="8.5" cy="8.5" r="3.5"/>
+          <path d="M11 11 20 20M15 15l3 3"/>
+        </svg>
+      </div>
+      <div class="pc-main">
+        <div>
+          <div class="pc-top">
+            <span class="badge badge-found">招领</span>
+            <span class="status-pill status-resolved"><span class="dot"></span>已归还</span>
+          </div>
+          <div class="pc-title">钥匙串（含宿舍门禁卡）</div>
+        </div>
+        <div class="pc-meta">
+          <span class="meta-item">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+            操场东侧看台
+          </span>
+          <span class="dot">·</span>
+          <span>5天前</span>
+        </div>
+      </div>
+      <div class="pc-actions">
+        <button class="pc-act-btn state" style="background:var(--blue-50);color:var(--blue-600);border-color:var(--blue-bd)">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M14.4 5.4 7.8 12l6.6 6.6"/></svg>
+          查看详情
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ 寻物：已找到 ============ -->
+    <div class="post-card" data-type="lost">
+      <div class="pc-thumb violet">
+        <svg class="ic" viewBox="0 0 24 24">
+          <path d="M4.5 14.2c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6v3.8H4.5z"/>
+          <rect x="3.5" y="15.5" width="2.5" height="5" rx="1"/>
+          <rect x="18" y="15.5" width="2.5" height="5" rx="1"/>
+        </svg>
+      </div>
+      <div class="pc-main">
+        <div>
+          <div class="pc-top">
+            <span class="badge badge-lost">寻物</span>
+            <span class="status-pill status-resolved"><span class="dot"></span>已找到</span>
+          </div>
+          <div class="pc-title">白色 AirPods Pro 耳机</div>
+        </div>
+        <div class="pc-meta">
+          <span class="meta-item">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-10a6 6 0 0 0-12 0c0 4.5 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+            体育馆羽毛球场
+          </span>
+          <span class="dot">·</span>
+          <span>3天前</span>
+        </div>
+      </div>
+      <div class="pc-actions">
+        <button class="pc-act-btn state" style="background:var(--blue-50);color:var(--blue-600);border-color:var(--blue-bd)">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M14.4 5.4 7.8 12l6.6 6.6"/></svg>
+          查看详情
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 底部横条 -->
+  <div class="home-indicator"></div>
+</div>
+
+<script>
+  // Tab 筛选
+  function filterTab(el) {
+    document.querySelectorAll('.segment .seg').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    const tab = el.textContent.trim();
+    document.querySelectorAll('.post-card').forEach(card => {
+      const type = card.dataset.type;
+      if (tab === '全部') {
+        card.style.display = '';
+      } else if (tab === '寻物' && type === 'lost') {
+        card.style.display = '';
+      } else if (tab === '招领' && type === 'found') {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

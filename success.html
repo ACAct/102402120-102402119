@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布成功 · 校园失物招领</title>
+<style>
+/* ==================== 设计令牌（五页统一） ==================== */
+:root {
+  --blue-600: #2E6BE6;
+  --blue-500: #3B79F0;
+  --blue-400: #5B8DEF;
+  --blue-50: #EEF4FF;
+  --blue-100: #E0ECFF;
+  --blue-bd: #D9E7FF;
+
+  --green-600: #16A34A;
+  --green-500: #22C55E;
+  --green-50: #ECFDF3;
+  --green-bd: #CBEFDB;
+
+  --ink-900: #101828;
+  --ink-700: #344054;
+  --ink-600: #475467;
+  --ink-500: #667085;
+  --ink-400: #8A94A6;
+  --ink-300: #A9B2C1;
+  --line: #EEF1F6;
+  --line-2: #E4E9F2;
+  --bg: #F6F8FC;
+  --white: #FFFFFF;
+
+  --r-lg: 16px;
+  --r-md: 14px;
+  --r-pill: 999px;
+
+  --sh-1: 0 1px 3px rgba(16,24,40,.04), 0 1px 2px rgba(16,24,40,.04);
+  --sh-2: 0 4px 12px -4px rgba(16,24,40,.08), 0 2px 4px -2px rgba(16,24,40,.04);
+  --sh-3: 0 16px 40px -16px rgba(22,163,74,.35), 0 4px 12px -4px rgba(16,24,40,.06);
+
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC",
+    "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink-900);
+  background: #E5E7EB;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px 48px;
+}
+
+/* ==================== 手机外框 ==================== */
+.phone {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px -24px rgba(0,0,0,.25),
+    0 16px 32px -16px rgba(0,0,0,.15),
+    0 2px 6px rgba(0,0,0,.08);
+  border: 1px solid rgba(0,0,0,.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 50;
+}
+
+.home-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: #000;
+  border-radius: 3px;
+  z-index: 50;
+}
+
+/* ==================== 状态栏 ==================== */
+.status-bar {
+  flex: none;
+  height: 44px;
+  padding: 0 20px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.status-bar .right { display: flex; align-items: center; gap: 5px; }
+
+/* ==================== 居中成功页面 ==================== */
+.success-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  text-align: center;
+}
+
+/* 成功图标 */
+.success-ic-wrap {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  margin-bottom: 28px;
+}
+
+/* 外圈柔和光晕 */
+.success-ic-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  background: radial-gradient(circle, rgba(34,197,94,.12) 0%, rgba(34,197,94,0) 70%);
+  border-radius: 50%;
+}
+
+.success-ic-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--green-bd);
+}
+.success-ic-ring.pulse {
+  animation: pulse 2.4s ease-out infinite;
+}
+@keyframes pulse {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.success-ic {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-500), #15803D);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--sh-3);
+}
+.success-ic svg {
+  width: 52px;
+  height: 52px;
+  stroke: #fff;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  animation: draw 0.7s cubic-bezier(.22,1.2,.36,1) forwards;
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* 标题 */
+.success-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink-900);
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+}
+
+/* 辅助文案 */
+.success-sub {
+  font-size: 13.5px;
+  color: var(--ink-500);
+  line-height: 1.7;
+  max-width: 260px;
+}
+
+/* 信息提示卡 */
+.tip-card {
+  margin-top: 28px;
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--blue-50);
+  border: 1px solid var(--blue-bd);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+.tip-card svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--blue-600);
+}
+.tip-card .tip-text {
+  font-size: 12px;
+  color: var(--ink-600);
+  line-height: 1.55;
+}
+.tip-card .tip-text strong {
+  color: var(--blue-700, #1D4ED8);
+  font-weight: 600;
+}
+
+/* 按钮组 */
+.btn-group {
+  width: 100%;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-primary {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--blue-500), #2456CF);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 22px -10px rgba(46,107,230,.7);
+  transition: .15s;
+}
+.btn-primary:active { transform: scale(0.99); }
+
+.btn-secondary {
+  width: 100%;
+  height: 50px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  background: var(--white);
+  color: var(--ink-700);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--sh-1);
+  transition: .15s;
+}
+.btn-secondary:active { background: var(--blue-50); color: var(--blue-600); border-color: var(--blue-bd); }
+
+/* ==================== 图标 ==================== */
+svg.ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- 刘海 -->
+  <div class="notch"></div>
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="right">
+      <svg class="ic" viewBox="0 0 24 24" width="17" height="17">
+        <path d="M2 16h3M8 13h3M14 10h3M20 7h2" stroke-width="2.2"/>
+      </svg>
+      <svg class="ic" viewBox="0 0 24 24" width="16" height="16">
+        <path d="M5.6 10.8a9.4 9.4 0 0 1 12.8 0M8.5 13.9a5.4 5.4 0 0 1 7 0"/>
+        <circle cx="12" cy="17.2" r="1.3" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg viewBox="0 0 27 12" width="24" height="12" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" opacity=".5"/>
+        <rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/>
+        <rect x="2" y="2" width="18" height="8" rx="1.2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 成功页面（居中） -->
+  <div class="success-wrap">
+
+    <!-- 成功图标 -->
+    <div class="success-ic-wrap">
+      <span class="success-ic-ring pulse"></span>
+      <div class="success-ic">
+        <svg viewBox="0 0 32 32">
+          <path d="M8 16.5 13.5 22 24 10.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 标题 -->
+    <div class="success-title">发布成功</div>
+
+    <!-- 辅助文案 -->
+    <div class="success-sub">
+      你的失物招领信息已经发布<br>
+      其他同学可以通过搜索找到这条信息
+    </div>
+
+    <!-- 提示卡 -->
+    <div class="tip-card">
+      <svg class="ic" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 8v4l2.5 2"/>
+      </svg>
+      <div class="tip-text">
+        可以去 <strong>"我的发布"</strong> 查看状态与联系留言<br>
+        物品一旦找到请及时标记已解决
+      </div>
+    </div>
+
+    <!-- 按钮组 -->
+    <div class="btn-group">
+      <button class="btn-primary">查看我的发布</button>
+      <button class="btn-secondary">返回首页</button>
+    </div>
+
+  </div>
+
+  <!-- 底部横条 -->
+  <div class="home-indicator"></div>
+</div>
+
+</body>
+</html>
