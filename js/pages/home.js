@@ -19,10 +19,20 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (util, schema, repository, layout, itemCard, icons) {
   'use strict';
 
-  /** 页面状态：当前筛选类型。 */
+  /** 页面状态：当前筛选类型与排序方式。 */
   var state = {
-    type: 'all'
+    type: 'all',
+    sort: 'active'    // active=进行中优先（默认） / time=最新发布 / type=按类型聚集
   };
+
+  /** 排序选项。 */
+  var SORTS = [
+    { value: 'active', label: '进行中优先' },
+    { value: 'time', label: '最新发布' }
+  ];
+
+  /** 常用关键词快捷入口，降低「不知道搜什么」的启动成本。 */
+  var HOT_KEYWORDS = ['校园卡', '雨伞', '耳机', '钥匙', '水杯'];
 
   /* ---------------------------------------------------------------- 渲染 */
 
@@ -86,10 +96,34 @@
       : '';
     return '' +
       '<div class="section-head">' +
-        '<span class="section-title">最新信息</span>' +
+        '<span class="section-title">' + (state.type === 'all' ? '最新信息' : schema.typeFullLabel(state.type)) + '</span>' +
         '<span class="section-count">共 ' + items.length + ' 条</span>' +
       '</div>' +
       '<div id="listBody">' + body + '</div>';
+  }
+
+  /** 排序切换：信息多起来之后，「还有效的信息」应当先被看到。 */
+  function renderSortBar() {
+    return '<div class="sort-bar">' +
+      '<span class="sort-label">排序</span>' +
+      SORTS.map(function (option) {
+        var active = option.value === state.sort ? ' active' : '';
+        return '<button type="button" class="sort-btn' + active + '" data-sort="' +
+          option.value + '" aria-pressed="' + (option.value === state.sort) + '">' +
+          option.label + '</button>';
+      }).join('') +
+      '</div>';
+  }
+
+  /** 常用关键词快捷搜索，一键跳到搜索页。 */
+  function renderHotKeywords() {
+    return '<div class="hot-row">' +
+      '<span class="hot-label">热门搜索</span>' +
+      HOT_KEYWORDS.map(function (word) {
+        return '<a class="hot-tag" href="' + layout.searchUrl(word, 'all') + '">' +
+          util.escapeHtml(word) + '</a>';
+      }).join('') +
+      '</div>';
   }
 
   /** 当前筛选下的空状态文案。 */
@@ -122,19 +156,36 @@
   }
 
   /**
+   * 按当前排序方式整理列表。
+   * active：进行中优先，其余按发布时间倒序——先让用户看到「还能帮上忙」的信息。
+   * time  ：纯按发布时间倒序。
+   */
+  function sortItems(items) {
+    var sorted = items.slice();
+    if (state.sort === 'time') {
+      return util.stableSort(sorted, function (a, b) { return b.publishedAt - a.publishedAt; });
+    }
+    return util.stableSort(sorted, function (a, b) {
+      if (a.resolved !== b.resolved) return a.resolved ? 1 : -1;
+      return b.publishedAt - a.publishedAt;
+    });
+  }
+
+  /**
    * 整个首页重绘。
    * 数据量在演示规模（几十条）以内，整体重绘比增量更新更简单可靠，
    * 且不会出现「筛选后残留旧卡片」这类状态不同步的问题。
    */
   function render() {
-    var items = repository.list({ type: state.type });
+    var items = sortItems(repository.list({ type: state.type }));
     var hasItems = items.length > 0;
 
     var html = '' +
       renderHeader() +
+      renderHotKeywords() +
       renderOverview() +
       layout.segment(schema.TYPE_FILTERS, state.type, 'data-filter') +
-      (hasItems ? renderList(items) : '') +
+      (hasItems ? renderSortBar() + renderList(items) : '') +
       layout.emptyState(Object.assign({ visible: !hasItems }, emptyOptions(state.type)));
 
     util.setHtml(document.getElementById('content'), html);
@@ -147,7 +198,18 @@
     if (state.type === type) return;
     state.type = type;
     render();
-    // 切换筛选后滚动位置回到顶部，避免停留在空白区域
+    scrollToTop();
+  }
+
+  /** 切换排序并重绘。 */
+  function setSort(sort) {
+    if (state.sort === sort) return;
+    state.sort = sort;
+    render();
+  }
+
+  /** 切换筛选后滚动位置回到顶部，避免停留在空白区域。 */
+  function scrollToTop() {
     var content = document.getElementById('content');
     if (content) content.scrollTop = 0;
   }
@@ -160,6 +222,12 @@
     util.delegate(content, 'click', '.segment .seg', function (event, el) {
       event.preventDefault();
       setType(el.getAttribute('data-filter'));
+    });
+
+    // 排序切换
+    util.delegate(content, 'click', '.sort-btn', function (event, el) {
+      event.preventDefault();
+      setSort(el.getAttribute('data-sort'));
     });
   }
 
@@ -176,5 +244,14 @@
     render();
   }
 
-  return { init: init, render: render, setType: setType, state: state };
+  return {
+    init: init,
+    render: render,
+    setType: setType,
+    setSort: setSort,
+    sortItems: sortItems,
+    SORTS: SORTS,
+    HOT_KEYWORDS: HOT_KEYWORDS,
+    state: state
+  };
 });

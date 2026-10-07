@@ -79,6 +79,69 @@
 .action-card .deco { right: -10px; bottom: -10px; width: 80px; height: 80px; }
 .action-card .deco2 { right: 14px; bottom: 24px; width: 40px; height: 40px; background: rgba(255, 255, 255, .08); }
 
+/* ---------- 热门搜索 ---------- */
+.hot-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: -8px 0 16px;
+}
+
+.hot-label {
+  font-size: 11px;
+  color: var(--ink-400);
+  flex: none;
+}
+
+.hot-tag {
+  font-size: 11.5px;
+  color: var(--blue-600);
+  background: var(--blue-50);
+  border: 1px solid var(--blue-bd);
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+  text-decoration: none;
+  transition: .15s;
+}
+
+.hot-tag:active { background: var(--blue-100); transform: scale(.96); }
+
+/* ---------- 排序条 ---------- */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.sort-bar .sort-label {
+  font-size: 11px;
+  color: var(--ink-400);
+  flex: none;
+  margin-right: 2px;
+}
+
+.sort-btn {
+  font-family: var(--font);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-600);
+  background: var(--white);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: .15s;
+}
+
+.sort-btn.active {
+  color: var(--blue-600);
+  border-color: var(--blue-bd);
+  background: var(--blue-50);
+  font-weight: 600;
+}
+
 /* ---------- 数据概览 ---------- */
 .overview {
   display: flex;
