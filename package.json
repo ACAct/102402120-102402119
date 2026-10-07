@@ -1,0 +1,16 @@
+{
+  "name": "campus-lost-and-found",
+  "version": "1.0.0",
+  "private": true,
+  "description": "校园失物招领 —— 软件工程结对作业2（WEB 原型实现，零运行时依赖）",
+  "scripts": {
+    "test": "node tests/run-all.js",
+    "test:node": "node --test tests/"
+  },
+  "keywords": [
+    "lost-and-found",
+    "campus",
+    "vanilla-js"
+  ],
+  "license": "MIT"
+}
