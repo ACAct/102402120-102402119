@@ -11,3 +11,4 @@
 console.log('运行全部单元测试（单进程模式）\n');
 
 require('./item.test.js');
+require('./search.test.js');

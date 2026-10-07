@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>搜索 · 校园失物招领</title>
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-search">
+
+<div class="phone">
+  <div id="chrome"></div>
+  <div id="statusBar"></div>
+
+  <!-- 顶部搜索栏：输入框单独挂载，实时搜索时不重建以免光标丢失 -->
+  <div id="searchBar"></div>
+
+  <!-- 结果区：类型分段 + 结果列表 / 引导 / 无结果 -->
+  <main class="content" id="body"></main>
+
+  <div class="home-indicator" aria-hidden="true"></div>
+</div>
+
+<!-- 依赖顺序：core → data → components → pages → 入口 -->
+<script src="js/core/util.js"></script>
+<script src="js/core/schema.js"></script>
+<script src="js/core/search.js"></script>
+<script src="js/data/seed.js"></script>
+<script src="js/data/item.js"></script>
+<script src="js/data/repository.js"></script>
+<script src="js/components/icons.js"></script>
+<script src="js/components/layout.js"></script>
+<script src="js/components/item-card.js"></script>
+<script src="js/pages/search.js"></script>
+<script>window.LF.pages.search.init();</script>
+
+</body>
+</html>

@@ -187,6 +187,82 @@
 /* 搜索页内容区顶部收紧 */
 .page-search .content { padding-top: 10px; }
 
+/* ---------- 关键词高亮 ---------- */
+mark.hl {
+  background: #FFF3C4;
+  color: var(--amber-700);
+  border-radius: 3px;
+  padding: 0 1px;
+  font-weight: 600;
+}
+
+/* ---------- 命中字段标记 ---------- */
+.match-tag {
+  font-size: 10px;
+  color: var(--green-600);
+  background: var(--green-50);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex: none;
+}
+
+/* ---------- 搜索引导与历史 ---------- */
+.sug-group { margin-bottom: 22px; }
+
+.sug-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sug-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-700);
+}
+
+.sug-clear {
+  font-family: var(--font);
+  font-size: 11.5px;
+  color: var(--ink-400);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.sug-clear:active { color: var(--blue-600); }
+
+.sug-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sug-tag {
+  font-family: var(--font);
+  font-size: 12.5px;
+  color: var(--ink-700);
+  background: var(--white);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: .15s;
+  box-shadow: var(--sh-1);
+}
+
+.sug-tag:active {
+  background: var(--blue-50);
+  border-color: var(--blue-bd);
+  color: var(--blue-600);
+  transform: scale(.97);
+}
+
+/* 搜索页的空状态留白小一些，避免把建议词挤出屏幕 */
+.page-search .empty-state { padding: 32px 20px; }
+
 /* ======================================================================
    详情页
    ====================================================================== */
