@@ -347,6 +347,14 @@ mark.hl {
 .badge-waiting { background: var(--amber-50); color: var(--amber-600); }
 .badge-green { background: var(--green-50); color: var(--green-600); }
 
+/* 分类徽章：中性色，避免与类型/状态徽章抢注意力 */
+.badge-cat {
+  background: var(--white);
+  color: var(--ink-500);
+  border: 1px solid var(--line-2);
+  font-weight: 500;
+}
+
 .title-main {
   font-size: 21px;
   font-weight: 700;
@@ -614,6 +622,56 @@ mark.hl {
 }
 
 .safety-tip svg { width: 16px; height: 16px; flex: none; margin-top: 1px; stroke: var(--amber-600); }
+
+/* ---------- 详情页附加操作 ---------- */
+.detail-extra {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 16px 0;
+}
+
+.extra-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 42px;
+  padding: 0 10px;
+  background: var(--white);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-700);
+  text-decoration: none;
+  box-shadow: var(--sh-1);
+  transition: .15s;
+  text-align: center;
+}
+
+.extra-btn:active {
+  background: var(--blue-50);
+  border-color: var(--blue-bd);
+  color: var(--blue-600);
+  transform: scale(.98);
+}
+
+.extra-btn svg { width: 15px; height: 15px; flex: none; }
+
+/* 点击「联系发布者」后高亮联系方式，提示用户往下看 */
+.contact-card.pulse {
+  animation: contactPulse 1.2s ease-out;
+}
+
+@keyframes contactPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(46, 107, 230, .35); }
+  60%  { box-shadow: 0 0 0 8px rgba(46, 107, 230, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 107, 230, 0); }
+}
+
+/* 详情页空状态的顶部留白（浮层导航栏会压住内容） */
+.page-detail .empty-state { padding-top: 96px; }
 
 /* ======================================================================
    小屏适配：手机浏览器直接打开时铺满屏幕

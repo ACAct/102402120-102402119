@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>信息详情 · 校园失物招领</title>
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-detail">
+
+<div class="phone">
+  <div id="chrome"></div>
+  <div id="statusBar"></div>
+
+  <!-- 详情内容：由 js/pages/detail.js 依据 ?id= 渲染 -->
+  <main class="content" id="content"></main>
+
+  <!-- 底部固定操作区（联系发布者 / 已完成） -->
+  <div id="bottomBar"></div>
+
+  <div class="home-indicator" aria-hidden="true"></div>
+</div>
+
+<!-- 依赖顺序：core → data → components → pages → 入口 -->
+<script src="js/core/util.js"></script>
+<script src="js/core/schema.js"></script>
+<script src="js/core/search.js"></script>
+<script src="js/data/seed.js"></script>
+<script src="js/data/item.js"></script>
+<script src="js/data/repository.js"></script>
+<script src="js/components/icons.js"></script>
+<script src="js/components/layout.js"></script>
+<script src="js/pages/detail.js"></script>
+<script>window.LF.pages.detail.init();</script>
+
+</body>
+</html>
