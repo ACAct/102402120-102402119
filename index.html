@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>校园失物招领</title>
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+<div class="phone">
+  <div id="chrome"></div>
+  <div id="statusBar"></div>
+  <main class="content" id="content"></main>
+  <div id="tabbar"></div>
+  <div class="home-indicator" aria-hidden="true"></div>
+</div>
+
+<!-- 依赖顺序：core → data → components → pages → 入口 -->
+<script src="js/core/util.js"></script>
+<script src="js/core/schema.js"></script>
+<script src="js/data/seed.js"></script>
+<script src="js/data/item.js"></script>
+<script src="js/data/repository.js"></script>
+<script src="js/components/icons.js"></script>
+<script src="js/components/layout.js"></script>
+<script src="js/components/item-card.js"></script>
+<script src="js/pages/home.js"></script>
+<script>window.LF.pages.home.init();</script>
+
+</body>
+</html>

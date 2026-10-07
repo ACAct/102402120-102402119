@@ -1,0 +1,16 @@
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 依赖与构建产物（本项目零依赖，正常不会出现）
+node_modules/
+package-lock.json
+
+# 测试与调试临时产物
+coverage/
+*.log
+_chrome/
+_dump.html
+_shot.png
