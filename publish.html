@@ -8,21 +8,34 @@
 <link rel="stylesheet" href="css/components.css" />
 <link rel="stylesheet" href="css/app.css" />
 </head>
-<body data-page="publish">
+<body class="page-publish">
 
 <div class="phone">
   <div id="chrome"></div>
   <div id="statusBar"></div>
+
+  <!-- 顶部导航（由 layout.navbar 渲染） -->
+  <div id="navSlot"></div>
+
+  <!-- 发布表单：类型选择 + 字段 + 逐项错误提示 -->
   <main class="content" id="content"></main>
+
+  <!-- 底部固定提交按钮 -->
+  <div id="bottomBar"></div>
+
   <div class="home-indicator" aria-hidden="true"></div>
 </div>
 
+<!-- 依赖顺序：core → data → components → pages → 入口 -->
 <script src="js/core/util.js"></script>
 <script src="js/core/schema.js"></script>
+<script src="js/data/seed.js"></script>
+<script src="js/data/item.js"></script>
+<script src="js/data/repository.js"></script>
 <script src="js/components/icons.js"></script>
 <script src="js/components/layout.js"></script>
-<script src="js/pages/placeholder.js"></script>
-<script>window.LF.pages.placeholder.init();</script>
+<script src="js/pages/publish.js"></script>
+<script>window.LF.pages.publish.init();</script>
 
 </body>
 </html>
