@@ -232,6 +232,7 @@
 .badge-lost { background: var(--blue-50); color: var(--blue-700); }
 .badge-found { background: var(--amber-50); color: var(--amber-600); }
 .badge-done { background: var(--green-50); color: var(--green-600); }
+.badge-active { background: var(--blue-50); color: var(--blue-600); }
 
 /* ==================== 卡片公共 ==================== */
 .info-card,
