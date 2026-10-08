@@ -8,21 +8,28 @@
 <link rel="stylesheet" href="css/components.css" />
 <link rel="stylesheet" href="css/app.css" />
 </head>
-<body data-page="success">
+<body class="page-success">
 
 <div class="phone">
   <div id="chrome"></div>
   <div id="statusBar"></div>
-  <main class="content" id="content"></main>
+
+  <!-- 成功提示 + 刚发布信息的摘要 + 后续入口 -->
+  <div class="content" id="content"></div>
+
   <div class="home-indicator" aria-hidden="true"></div>
 </div>
 
+<!-- 依赖顺序：core → data → components → pages → 入口 -->
 <script src="js/core/util.js"></script>
 <script src="js/core/schema.js"></script>
+<script src="js/data/seed.js"></script>
+<script src="js/data/item.js"></script>
+<script src="js/data/repository.js"></script>
 <script src="js/components/icons.js"></script>
 <script src="js/components/layout.js"></script>
-<script src="js/pages/placeholder.js"></script>
-<script>window.LF.pages.placeholder.init();</script>
+<script src="js/pages/success.js"></script>
+<script>window.LF.pages.success.init();</script>
 
 </body>
 </html>
